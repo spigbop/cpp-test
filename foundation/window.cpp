@@ -1,12 +1,22 @@
 #include "./window.h"
 #include <iostream>
 
+Window::Window() {}
+
 Window::Window(Vector2 size, Vector2 position, String title) : 
 	Object(),
 	size(size),
 	position(position),
-	title(title) {
-	
+	title(title) {}
+
+Window::~Window() {
+	if(m_glfwWindow) glfwDestroyWindow(m_glfwWindow);
+    glfwTerminate();
+}
+
+void Window::show() {
+	m_working = true;
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // macOS fix
@@ -29,11 +39,8 @@ Window::Window(Vector2 size, Vector2 position, String title) :
         glfwSwapBuffers(m_glfwWindow);
         glfwPollEvents();
     }
-}
 
-Window::~Window() {
-	if(m_glfwWindow) glfwDestroyWindow(m_glfwWindow);
-    glfwTerminate();
+    m_working = false;
 }
 
 void Window::run() {
@@ -48,7 +55,11 @@ void Window::run() {
 
 void Window::setTitle(const String& new_title) {
 	title = String(new_title);
-	std::cout << title.str() << std::endl;
+	
+	if (m_working) {
+		std::cout << "Called setTitle on a working window with id " << id() << " May not set properly." << std::endl;
+	}
+
 	if (m_glfwWindow) {
 		glfwSetWindowTitle(m_glfwWindow, new_title.str());
 	}

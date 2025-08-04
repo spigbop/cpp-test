@@ -11,10 +11,12 @@ int main() {
 	Vector2 add(100, 100);
 	Vector2 sum = base + add;
 
-	Window* win = new Window(sum, {0, 0}, String("ID: ?"));
-	win->run();
+	Window win;
+	win.size = sum;
+	win.title = String(win.id());
 
-	delete win;
-	win = nullptr;
+	win.show();
+	win.run();
+
     return 0;
 }
